@@ -3270,6 +3270,12 @@ multimatch@^5.0.0:
 mute-stream@0.0.8:
   version "0.0.8"
 
+"my-webpack-project@file:":
+  version "1.0.0"
+  resolved "file:"
+  dependencies:
+    my-webpack-project "file:"
+
 nanoid@^3.3.6:
   version "3.3.6"
 
