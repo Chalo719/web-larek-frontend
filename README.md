@@ -94,8 +94,6 @@ interface IProductList {
 
 ```
 interface IOrderData {
-  items: string[];
-  total: number;
   payment: PaymentMethod;
   address: string;
   email: string;
@@ -178,12 +176,11 @@ type PaymentMethod = "online" | "cash";
 
 Поля:
 
-- `_order: IOrderData` - данные о заказе
+- `_order: IOrderData` - данные о заказе (способ оплаты, адрес, электронная почта и номер телефона)
 
 Методы:
 
 - `get order(): IOrderData` - возвращает данные о заказе
-- `setItems(data: Pick<IOrderData, 'items' | 'total'>): void` - устанавливает данные о товарах и их стоимости (корзина)
 - `setPayment(data: Pick<IOrderData, 'payment' | 'address'>): void` - установаливает данные о способе оплаты и адресе (форма 1)
 - `setContacts(data: Pick<IOrderData, 'email' | 'phone'>): void` - устанавливает данные о почте и телефоне (форма 2)
 
@@ -321,7 +318,7 @@ type PaymentMethod = "online" | "cash";
 
 ## Слой Презентера (Presenter)
 
-Т.к. приложение небольшое и одностраничное, весь соеденительный код не выделен в отдельные классы и находится в `index.ts`
+Т.к. приложение небольшое и одностраничное, весь соединительный код не выделен в отдельные классы и находится в `index.ts`
 
 ### Взаимодействие компонентов и слоёв приложения
 

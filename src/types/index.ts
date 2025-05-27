@@ -13,12 +13,19 @@ export interface IProductItem {
 }
 
 export interface IOrderData {
-  items: string[];
-  total: number;
   payment: PaymentMethod;
   address: string;
   email: string;
   phone: string;
+}
+
+export interface IOrderRequest {
+  items: string[];
+  total: number;
+  payment: PaymentMethod;
+  email: string;
+  phone: string;
+  address: string;
 }
 
 export interface IOrderResponse {

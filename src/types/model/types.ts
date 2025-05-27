@@ -25,7 +25,6 @@ export interface IOrderModel {
   _order: IOrderData;
 
   get order(): IOrderData;
-  setItems(data: Pick<IOrderData, 'items' | 'total'>): void;
   setPayment(data: Pick<IOrderData, 'payment' | 'address'>): void;
   setContacts(data: Pick<IOrderData, 'email' | 'phone'>): void;
 }
