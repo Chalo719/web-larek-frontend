@@ -115,6 +115,14 @@ type PaymentMethod = "online" | "cash";
 - `get` - принимает в себя endpoint, по которому выполняется GET-запрос, и возвращает promise с объектом данных ответа
 - `post` - принимает в себя endpoint, объект отправляемых на сервер данных и (опционально) `ApiPostMethod` метод запроса (по умолчанию - `POST`), выполняет запрос в соответствиии с указанным методом и возвращает promise с объектом данных ответа
 
+### AppApi
+
+Расширяет базовое Api и предоставляет удобные методы для взаимодействия с сервером:
+
+- `getProductList(): Promise<IProductList>` - получает список товаров с сервера
+- `getProductItem(id: string): Promise<IProductItem>` - получает конкретный товар с сервера по id
+- `postOrder(data: IOrderData): Promise<IOrderResponse>` - отправляет данные заказа на сервер
+
 ### Класс EventEmitter
 
 Классическая реализация брокера событий (паттерн Observer), благодаря которому возможно строить приложение с применением СОП.\
@@ -128,14 +136,6 @@ type PaymentMethod = "online" | "cash";
 - `trigger` - создаёт callback-триггер, генерирующий событие при вызове, принимая в себя название события и (опционально) контекст
 
 ## Слой Модели (Model)
-
-### AppApi
-
-Расширяет базовое Api и предоставляет удобные методы для взаимодействия с сервером:
-
-- `getProductList(): Promise<IProductList>` - получает список товаров с сервера
-- `getProductItem(id: string): Promise<IProductItem>` - получает конкретный товар с сервера по id
-- `postOrder(data: IOrderData): Promise<IOrderResponse>` - отправляет данные заказа на сервер
 
 ### ProductsModel
 
