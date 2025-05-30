@@ -1,57 +1,21 @@
 export interface IPage {
-  page: HTMLElement;
-  gallery: HTMLElement;
-  basket: HTMLButtonElement;
-  basketCounter: HTMLElement;
-
   renderGallery(cards: HTMLElement[]): void;
   renderBasket(counter: number): void;
 }
 
 export interface IModal {
-  modal: HTMLElement;
-  _content: HTMLElement;
-  closeButton: HTMLButtonElement;
-
   set content(content: HTMLElement);
   open(): void;
   close(): void;
 }
 
-export interface ICard {
-  card: HTMLElement;
-  title: HTMLElement;
-  price: HTMLElement;
-
+export interface IView {
   render(): HTMLElement;
-}
-
-export interface IGalleryItem {
-  category: HTMLElement;
-  image: HTMLElement;
-}
-
-
-export interface ICardPreview {
-  description: HTMLElement;
-  basketButton: HTMLButtonElement;
-}
-
-export interface IBasketItem {
-  index: HTMLElement;
-  removeButton: HTMLButtonElement;
 }
 
 export interface IBasket {
-  basket: HTMLElement;
-  _products: HTMLElement[];
-  productsList: HTMLElement;
-  totalPrice: HTMLElement;
-  orderButton: HTMLButtonElement;
-
   set products(products: HTMLElement[]);
   setTotalPrice(total: number): void;
-  render(): HTMLElement;
 }
 
 export interface IForm {

@@ -28,9 +28,9 @@ export class BasketModel implements IBasketModel {
     this.total = 0;
   }
 
-  private getTotal(): number {
+  getTotal(): number {
     return this._products.reduce((total, item) => {
-      return total + item.price !== null ? item.price : 0;
+      return total + (item.price !== null ? item.price : 0);
     }, 0)
   }
 

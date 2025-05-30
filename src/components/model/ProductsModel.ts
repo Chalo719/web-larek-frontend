@@ -1,5 +1,6 @@
 import { IProductItem } from "../../types";
 import { IProductsModel } from "../../types/model/types";
+import { CDN_URL } from "../../utils/constants";
 
 export class ProductsModel implements IProductsModel {
   protected _products: IProductItem[] = [];
@@ -13,6 +14,7 @@ export class ProductsModel implements IProductsModel {
 
   set products(products: IProductItem[]) {
     this._products = products;
+    this._products.forEach(item => item.image = `${CDN_URL}${item.image.replace('.svg', '.png')}`);
   }
 
   getProduct(id: string): IProductItem {

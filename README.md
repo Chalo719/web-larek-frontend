@@ -197,8 +197,11 @@ type PaymentMethod = "online" | "cash";
 - `basket: HTMLButtonElement` - иконка корзины
 - `basketCounter: HTMLElement` - счётчик товаров в корзине
 
+Методы:
+
 - `renderGallery(cards: HTMLElement[]): void` - отрисовка списка карточек
 - `renderBasket(counter: number): void` - отрисовка значения счётчика в корзине
+- `lock(value: boolean): void` - управление блокировкой страницы (запрет/разрешение скролла)
 
 ### Modal
 
@@ -206,6 +209,7 @@ type PaymentMethod = "online" | "cash";
 
 Поля:
 
+- `container: HTMLElement` - элемент обёртки модального окна
 - `modal: HTMLElement` - элемент модального окна
 - `_content: HTMLElement` - содержимое модального окна
 - `closeButton: HTMLButtonElement` - кнопка закрытия модального окна
@@ -237,14 +241,14 @@ type PaymentMethod = "online" | "cash";
 Расширяет абстрактный класс `Card`, добавляя ему свойства, необходимые для отображения карточки товара в галерее на главной странице:
 
 - `category: HTMLElement` - элемент для отображения категории товара
-- `image: HTMLElement` - элемент для отображения картинки товара
+- `image: HTMLImageElement` - элемент для отображения картинки товара
 
 ### CardPreview
 
 Расширяет класс `GalleryItem`, добавляя ему свойства, необходимые для отображения карточки товара в модальном окне:
 
 - `description: HTMLElement` - элемент для отображения описания товара
-- `basketButton: HTMLElement` - элемент для отображения кнопки добавления товара в корзину
+- `basketButton: HTMLButtonElement` - элемент для отображения кнопки добавления товара в корзину
 
 ### BasketItem
 
