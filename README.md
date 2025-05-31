@@ -286,7 +286,7 @@ type PaymentMethod = "online" | "cash";
 
 - `form: HTMLFormElement` - элемент формы, получаемый из template
 - `submitButton: HTMLButtonElement` - элемент кнопки отправки формы
-- `formErrors: HTMLElement` - элементы для отображения ошибок в форме
+- `formErrors: HTMLElement` - элемент для отображения ошибок в форме
 
 Методы:
 
@@ -312,7 +312,7 @@ type PaymentMethod = "online" | "cash";
 
 Поля:
 
-- `success: HTMLElement` - элемента разметки окна
+- `success: HTMLElement` - элемент разметки окна
 - `description: HTMLElement` - элемент для отображения сообщения
 - `closeButton: HTMLButtonElement` - элемент для кнопки "За новыми покупками!"
 

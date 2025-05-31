@@ -10,6 +10,9 @@ import { Page } from './components/view/Page';
 import './scss/styles.scss';
 import { API_URL } from './utils/constants';
 import { cloneTemplate } from './utils/utils';
+import { PaymentForm } from './components/view/PaymentForm';
+import { ContactsForm } from './components/view/ContactsForm';
+import { Success } from './components/view/Success';
 
 const api = new AppApi(API_URL);
 const productsModel = new ProductsModel();
@@ -18,6 +21,11 @@ const basketModel = new BasketModel();
 const page = new Page(document.querySelector('.page'));
 const modal = new Modal(document.querySelector('#modal-container'));
 const basket = new Basket(cloneTemplate('#basket'));
+
+const paymentForm = new PaymentForm(cloneTemplate('#order'));
+const contactsForm = new ContactsForm(cloneTemplate('#contacts'));
+
+const success = new Success(cloneTemplate('#success'));
 
 api.getProductList()
   .then(data => {
@@ -40,6 +48,11 @@ api.getProductList()
     basket.setTotalPrice(basketModel.getTotal());
 
     modal.content = basket.render();
+
+    modal.content = paymentForm.render();
+    modal.content = contactsForm.render();
+
+    modal.content = success.render();
 
     modal.open();
     page.lock(true);

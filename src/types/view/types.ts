@@ -1,6 +1,7 @@
 export interface IPage {
   renderGallery(cards: HTMLElement[]): void;
   renderBasket(counter: number): void;
+  lock(value: boolean): void;
 }
 
 export interface IModal {
@@ -19,27 +20,5 @@ export interface IBasket {
 }
 
 export interface IForm {
-  form: HTMLFormElement;
-  submitButton: HTMLButtonElement;
-  formErrors: HTMLElement;
-
   render(): HTMLFormElement;
-}
-
-export interface IPaymentForm {
-  paymentButtons: HTMLButtonElement[];
-  addressInput: HTMLInputElement;
-}
-
-export interface IContactsForm {
-  emailInput: HTMLInputElement;
-  phoneInput: HTMLInputElement;
-}
-
-export interface ISuccess {
-  success: HTMLElement;
-  description: HTMLElement;
-  closeButton: HTMLButtonElement;
-
-  render(): HTMLElement;
 }
