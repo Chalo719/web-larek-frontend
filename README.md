@@ -100,7 +100,7 @@ interface IOrderData {
   phone: string;
 }
 
-type PaymentMethod = "online" | "cash";
+type PaymentMethod = "card" | "cash";
 ```
 
 ## Базовый код
@@ -121,7 +121,7 @@ type PaymentMethod = "online" | "cash";
 
 - `getProductList(): Promise<IProductList>` - получает список товаров с сервера
 - `getProductItem(id: string): Promise<IProductItem>` - получает конкретный товар с сервера по id
-- `postOrder(data: IOrderData): Promise<IOrderResponse>` - отправляет данные заказа на сервер
+- `postOrder(data: IOrderRequest): Promise<IOrderResponse>` - отправляет данные заказа на сервер
 
 ### Класс EventEmitter
 
@@ -144,7 +144,7 @@ type PaymentMethod = "online" | "cash";
 Поля:
 
 - `_products: IProductItem[]` - массив всех товаров
-- `_preview: string | null` - id выбранного товара (например, для отображения в модальном окне)
+- `events: IEvents` - брокер событий
 
 Методы:
 
@@ -159,11 +159,13 @@ type PaymentMethod = "online" | "cash";
 Поля:
 
 - `_products: IProductItem[]` - массив всех товаров в корзине
-- `total: number` - текущая сумма стоимостей товаров в корзине
+- `_total: number` - текущая сумма стоимостей товаров в корзине
+- `events: IEvents` - брокер событий
 
 Методы:
 
 - `get products(): IProductItem[]` - геттер для получения всего списка товаров в корзине
+- `get total(): number` - геттер для получения суммы стоимостей товаров в корзине
 - `addProduct(product: IProductItem): void` - добавляет товар в корзину
 - `removeProduct(id: string): void` - удаляет товар из корзины
 - `clearBasket(): void` - очищает корзину
@@ -177,6 +179,7 @@ type PaymentMethod = "online" | "cash";
 Поля:
 
 - `_order: IOrderData` - данные о заказе (способ оплаты, адрес, электронная почта и номер телефона)
+- `events: IEvents` - брокер событий
 
 Методы:
 
@@ -196,6 +199,8 @@ type PaymentMethod = "online" | "cash";
 - `gallery: HTMLElement` - список для карточек товаров
 - `basket: HTMLButtonElement` - иконка корзины
 - `basketCounter: HTMLElement` - счётчик товаров в корзине
+- `bodyScrollY: number` - позиция прокрутки страницы
+- `events: IEvents` - брокер событий
 
 Методы:
 
@@ -213,6 +218,7 @@ type PaymentMethod = "online" | "cash";
 - `modal: HTMLElement` - элемент модального окна
 - `_content: HTMLElement` - содержимое модального окна
 - `closeButton: HTMLButtonElement` - кнопка закрытия модального окна
+- `events: IEvents` - брокер событий
 
 Методы:
 
@@ -242,6 +248,7 @@ type PaymentMethod = "online" | "cash";
 
 - `category: HTMLElement` - элемент для отображения категории товара
 - `image: HTMLImageElement` - элемент для отображения картинки товара
+- `events: IEvents` - брокер событий
 
 ### CardPreview
 
@@ -249,6 +256,7 @@ type PaymentMethod = "online" | "cash";
 
 - `description: HTMLElement` - элемент для отображения описания товара
 - `basketButton: HTMLButtonElement` - элемент для отображения кнопки добавления товара в корзину
+- `events: IEvents` - брокер событий
 
 ### BasketItem
 
@@ -256,6 +264,7 @@ type PaymentMethod = "online" | "cash";
 
 - `index: HTMLElement` - элемент для отображения номера товара в корзине
 - `removeButton: HTMLElement` - элемент для отображения кнопки удаления товара из корзины
+- `events: IEvents` - брокер событий
 
 ### Basket
 
@@ -269,6 +278,7 @@ type PaymentMethod = "online" | "cash";
 - `productsList: HTMLElement` - элемент списка товаров в корзине
 - `totalPrice: HTMLElement` - элемент для отображения итоговой суммы товаров в корзине
 - `orderButton: HTMLButtonElement` - элемент кнопки оформления заказа
+- `events: IEvents` - брокер событий
 
 Методы:
 
@@ -290,14 +300,22 @@ type PaymentMethod = "online" | "cash";
 
 Методы:
 
+- `clearForm(): void` - очищает поля и ошибки формы
 - `render(): HTMLFormElement` - возвращает разметку для отрисовки
 
 ### PaymentForm
 
 Расширяет абстрактный класс `Form`, добавляя ему свойства, необходимые для отображения формы получения способа оплаты и адреса:
 
-- `paymentButtons: HTMLButtonElement[]` - список элементов кнопок для выбора способа оплаты
+- `cardButton: HTMLButtonElement` - элемент кнопки для выбора способа оплаты "Онлайн"
+- `cashButton: HTMLButtonElement` - элемент кнопки для выбора способа оплаты "При получении"
 - `addressInput: HTMLInputElement` - элемент для поля ввода адреса
+- `private currentPaymentMethod: PaymentMethod | undefined` - выбранный способ оплаты
+- `events: IEvents` - брокер событий
+
+Методы:
+
+- `checkValidation(): void` - проверка валидности формы
 
 ### ContactsForm
 
@@ -305,6 +323,11 @@ type PaymentMethod = "online" | "cash";
 
 - `emailInput: HTMLInputElement` - элемент для поля ввода адреса электронной почты
 - `phoneInput: HTMLInputElement` - элемент для поля ввода номера телефона
+- `events: IEvents` - брокер событий
+
+Методы:
+
+- `checkValidation(): void` - проверка валидности формы
 
 ### Success
 
@@ -315,9 +338,11 @@ type PaymentMethod = "online" | "cash";
 - `success: HTMLElement` - элемент разметки окна
 - `description: HTMLElement` - элемент для отображения сообщения
 - `closeButton: HTMLButtonElement` - элемент для кнопки "За новыми покупками!"
+- `events: IEvents` - брокер событий
 
 Методы:
 
+- `setDescription(totalPrice: number): void` - устанавливает количество списанных синапсов в описании в окне
 - `render(): HTMLElement` - возвращает заполненную данными разметку для отрисовки
 
 ## Слой Презентера (Presenter)
@@ -330,7 +355,7 @@ type PaymentMethod = "online" | "cash";
 
 #### Пример взаимодействия
 
-1. Отображение `BasketItem` реагирует на нажатие кнопки удаления товара и генерирует событие `product:removed`
+1. Отображение `BasketItem` реагирует на нажатие кнопки удаления товара и генерирует событие `basket-item:removed`
 2. Презентер обрабатывает событие и вызывает метод `removeProduct` модели `BasketModel` для изменения данных
 3. Модель `BasketModel` изменяет данные и генерирует событие `basket:changed`
 4. Презентер обрабатывает событие и вызывает сеттер поля `products` отображения `Basket`, передавая в него данные из модели, а затем вызывает `render` для получения обновлённой разметки
@@ -351,10 +376,9 @@ _События, возникающие при взаимодействии по
 - `card-preview:opened` - выбор карточки `GalleryItem`, открытие карточки товара `CardPreview` в модальном окне
 - `basket:opened` - открытие корзины `Basket` в модальном окне
 - `product:added` - добавление товара в корзину по кнопке в `CardPreview`
-- `product:removed` - удаление товара из корзины по кнопке в `BasketItem`
+- `product:removed` - удаление товара из корзины по кнопке в `CardPreview`
+- `basket-item:removed` - удаление товара из корзины по кнопке в `BasketItem`
 - `order:opened` - переход к форме оформления заказа по кнопке в `Basket`, открытие формы `PaymentForm` в модальном окне
 - `order:payment-updated` - отправка формы `PaymentForm`, открытие формы `ContactsForm` в модальном окне
-- `order:constants-updated` - отправка формы `ContactsForm`, открытие окна `Success` в модальном окне
+- `order:contacts-updated` - отправка формы `ContactsForm`, открытие окна `Success` в модальном окне
 - `order:success` - нажатие на кнопку "За новыми покупками!" в окне `Success`
-- `order:closed` - закрытие модального окна во время оформления заказа
-- `form:invalid` - появление ошибок валидации в форме

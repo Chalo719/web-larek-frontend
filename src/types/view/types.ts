@@ -20,5 +20,6 @@ export interface IBasket {
 }
 
 export interface IForm {
+  clearForm(): void;
   render(): HTMLFormElement;
 }

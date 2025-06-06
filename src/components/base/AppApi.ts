@@ -1,4 +1,4 @@
-import { IProductList, IProductItem, IOrderData, IOrderResponse } from "../../types";
+import { IProductList, IProductItem, IOrderResponse, IOrderRequest } from "../../types";
 import { IAppApi } from "../../types/base/types";
 import { Api } from "./api";
 
@@ -11,7 +11,7 @@ export class AppApi extends Api implements IAppApi {
     return this.get<IProductItem>(`/product/${id}`);
   }
 
-  postOrder(data: IOrderData): Promise<IOrderResponse> {
+  postOrder(data: IOrderRequest): Promise<IOrderResponse> {
     return this.post<IOrderResponse>('/order', data);
   }
 }

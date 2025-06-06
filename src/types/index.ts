@@ -33,4 +33,4 @@ export interface IOrderResponse {
   total: number;
 }
 
-export type PaymentMethod = "online" | "cash";
+export type PaymentMethod = "card" | "cash";

@@ -13,48 +13,142 @@ import { cloneTemplate } from './utils/utils';
 import { PaymentForm } from './components/view/PaymentForm';
 import { ContactsForm } from './components/view/ContactsForm';
 import { Success } from './components/view/Success';
+import { EventEmitter } from './components/base/events';
+import { PaymentMethod } from './types';
+import { OrderModel } from './components/model/OrderModel';
+
+const events = new EventEmitter();
 
 const api = new AppApi(API_URL);
-const productsModel = new ProductsModel();
-const basketModel = new BasketModel();
+const productsModel = new ProductsModel(events);
+const basketModel = new BasketModel(events);
+const orderModel = new OrderModel(events);
 
-const page = new Page(document.querySelector('.page'));
-const modal = new Modal(document.querySelector('#modal-container'));
-const basket = new Basket(cloneTemplate('#basket'));
+const page = new Page(document.querySelector('.page'), events);
+const modal = new Modal(document.querySelector('#modal-container'), events);
+const basket = new Basket(cloneTemplate('#basket'), events);
 
-const paymentForm = new PaymentForm(cloneTemplate('#order'));
-const contactsForm = new ContactsForm(cloneTemplate('#contacts'));
+const paymentForm = new PaymentForm(cloneTemplate('#order'), events);
+const contactsForm = new ContactsForm(cloneTemplate('#contacts'), events);
 
-const success = new Success(cloneTemplate('#success'));
+const success = new Success(cloneTemplate('#success'), events);
 
 api.getProductList()
   .then(data => {
     productsModel.products = data.items;
-
-    const test = productsModel.getProduct('c101ab44-ed99-4a54-990d-47aa2bb4e7d9');
-
-    const cards = productsModel.products.map(item => new GalleryItem(cloneTemplate('#card-catalog'), item).render());
-    page.renderGallery(cards);
-    page.renderBasket(0);
-
-    const testPrev = new CardPreview(cloneTemplate('#card-preview'), test);
-    modal.content = testPrev.render();
-
-    productsModel.products.forEach(item => basketModel.addProduct(item));
-    page.renderBasket(basketModel.products.length);
-
-    const basketCards = basketModel.products.map(item => new BasketItem(cloneTemplate('#card-basket'), item).render());
-    basket.products = basketCards;
-    basket.setTotalPrice(basketModel.getTotal());
-
-    modal.content = basket.render();
-
-    modal.content = paymentForm.render();
-    modal.content = contactsForm.render();
-
-    modal.content = success.render();
-
-    modal.open();
-    page.lock(true);
   })
   .catch(err => console.error(err))
+
+events.on('products:changed', () => {
+  // console.log('products:changed');
+
+  const cards = productsModel.products.map(item => new GalleryItem(cloneTemplate('#card-catalog'), item, events).render());
+  page.renderGallery(cards);
+  page.renderBasket(0);
+});
+
+events.on('basket:changed', () => {
+  // console.log('basket:changed');
+
+  page.renderBasket(basketModel.products.length);
+  const basketCards = basketModel.products.map((item, index) => new BasketItem(cloneTemplate('#card-basket'), item, index + 1, events).render());
+  basket.products = basketCards;
+  basket.setTotalPrice(basketModel.total);
+  basket.render();
+});
+
+events.on('order:changed', () => {
+  // console.log('order:changed');
+});
+
+events.on('modal:opened', () => {
+  // console.log('modal:opened');
+
+  page.lock(true);
+});
+
+events.on('modal:closed', () => {
+  // console.log('modal:closed');
+
+  page.lock(false);
+});
+
+events.on('card-preview:opened', ({ id }: { id: string }) => {
+  // console.log('card-preview:opened');
+
+  const card = productsModel.getProduct(id);
+  const cardPreview = new CardPreview(cloneTemplate('#card-preview'), card, basketModel.isInBasket(id), events);
+  modal.content = cardPreview.render();
+  modal.open();
+});
+
+events.on('basket:opened', () => {
+  // console.log('basket:opened');
+
+  modal.content = basket.render();
+  modal.open();
+});
+
+events.on('product:added', ({ id }: { id: string }) => {
+  // console.log('product:added');
+
+  const product = productsModel.getProduct(id);
+  basketModel.addProduct(product);
+  modal.close();
+});
+
+events.on('product:removed', ({ id }: { id: string }) => {
+  // console.log('product:removed');
+
+  basketModel.removeProduct(id);
+  modal.close();
+});
+
+events.on('basket-item:removed', ({ id }: { id: string }) => {
+  // console.log('basket-item:removed');
+
+  basketModel.removeProduct(id);
+});
+
+events.on('order:opened', () => {
+  // console.log('order:opened');
+
+  paymentForm.clearForm();
+  modal.content = paymentForm.render();
+});
+
+events.on('order:payment-updated', ({ payment, address }: { payment: PaymentMethod, address: string }) => {
+  // console.log('order:payment-updated');
+
+  orderModel.setPayment({ payment, address });
+  contactsForm.clearForm();
+  modal.content = contactsForm.render();
+});
+
+events.on('order:contacts-updated', ({ email, phone }: { email: string, phone: string }) => {
+  // console.log('order:constants-updated');
+
+  orderModel.setContacts({ email, phone });
+
+  const nullProducts = basketModel.products.filter(item => item.price === null);
+  nullProducts.forEach(item => basketModel.removeProduct(item.id));
+
+  api.postOrder({
+    ...orderModel.order,
+    items: basketModel.products.map(item => item.id),
+    total: basketModel.total
+  })
+    .then(data => {
+      success.setDescription(data.total);
+      modal.content = success.render();
+      basketModel.clearBasket();
+    })
+    .catch(err => console.error(err));
+});
+
+events.on('order:success', () => {
+  // console.log('order:success');
+
+  modal.close();
+});
+
