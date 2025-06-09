@@ -13,38 +13,24 @@ export class ContactsForm extends Form {
     this.phoneInput = ensureElement<HTMLInputElement>('.form__input[name="phone"]', this.form);
 
     this.emailInput.addEventListener('input', () => {
-      this.checkValidation();
+      this.events.emit('order:contacts-changed', {
+        email: this.emailInput.value,
+        phone: this.phoneInput.value
+      });
     });
 
     this.phoneInput.addEventListener('input', () => {
-      this.checkValidation();
+      this.events.emit('order:contacts-changed', {
+        email: this.emailInput.value,
+        phone: this.phoneInput.value
+      });
     });
 
     this.form.addEventListener('submit', event => {
       event.preventDefault();
 
-      this.events.emit('order:contacts-updated', { email: this.emailInput.value, phone: this.phoneInput.value });
+      this.events.emit('order:contacts-updated');
     });
-  }
-
-  private checkValidation(): void {
-    const errors = [];
-    this.formErrors.textContent = '';
-
-    if (this.emailInput.value === '') {
-      errors.push('Не указан адрес электронной почты!');
-    }
-
-    if (this.phoneInput.value === '') {
-      errors.push('Не указан номер телефона!');
-    }
-
-    if (errors.length > 0) {
-      errors.forEach(err => this.formErrors.textContent += `${err}\n`);
-      this.submitButton.setAttribute('disabled', 'true');
-    } else {
-      this.submitButton.removeAttribute('disabled');
-    }
   }
 
   clearForm(): void {

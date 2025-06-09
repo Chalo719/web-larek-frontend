@@ -16,6 +16,15 @@ export abstract class Form implements IForm {
     // Реализуется в дочерних классах
   }
 
+  setValidity(isValid: boolean, errors: string[]): void {
+    this.formErrors.textContent = errors.join('\n');
+    if (isValid) {
+      this.submitButton.removeAttribute('disabled');
+    } else {
+      this.submitButton.setAttribute('disabled', 'true');
+    }
+  }
+
   render(): HTMLFormElement {
     return this.form;
   }

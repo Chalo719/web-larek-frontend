@@ -21,7 +21,10 @@ export class PaymentForm extends Form {
       this.cashButton.classList.remove('button_alt-active');
 
       this.currentPaymentMethod = 'card';
-      this.checkValidation();
+      this.events.emit('order:payment-changed', {
+        address: this.addressInput.value,
+        payment: this.currentPaymentMethod
+      });
     });
 
     this.cashButton.addEventListener('click', () => {
@@ -29,38 +32,24 @@ export class PaymentForm extends Form {
       this.cardButton.classList.remove('button_alt-active');
 
       this.currentPaymentMethod = 'cash';
-      this.checkValidation();
+      this.events.emit('order:payment-changed', {
+        address: this.addressInput.value,
+        payment: this.currentPaymentMethod
+      });
     });
 
     this.addressInput.addEventListener('input', () => {
-      this.checkValidation();
+      this.events.emit('order:payment-changed', {
+        address: this.addressInput.value,
+        payment: this.currentPaymentMethod
+      });
     });
 
     this.form.addEventListener('submit', event => {
       event.preventDefault();
 
-      this.events.emit('order:payment-updated', { payment: this.currentPaymentMethod, address: this.addressInput.value });
+      this.events.emit('order:payment-updated');
     });
-  }
-
-  private checkValidation(): void {
-    const errors = [];
-    this.formErrors.textContent = '';
-
-    if (this.currentPaymentMethod === undefined) {
-      errors.push('Не выбран способ оплаты!');
-    }
-
-    if (this.addressInput.value === '') {
-      errors.push('Не указан адрес доставки!');
-    }
-
-    if (errors.length > 0) {
-      errors.forEach(err => this.formErrors.textContent += `${err}\n`);
-      this.submitButton.setAttribute('disabled', 'true');
-    } else {
-      this.submitButton.removeAttribute('disabled');
-    }
   }
 
   clearForm(): void {

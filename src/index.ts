@@ -15,7 +15,7 @@ import { ContactsForm } from './components/view/ContactsForm';
 import { Success } from './components/view/Success';
 import { EventEmitter } from './components/base/events';
 import { PaymentMethod } from './types';
-import { OrderModel } from './components/model/OrderModel';
+import { formType, OrderModel } from './components/model/OrderModel';
 
 const events = new EventEmitter();
 
@@ -57,8 +57,14 @@ events.on('basket:changed', () => {
   basket.render();
 });
 
-events.on('order:changed', () => {
+events.on('order:changed', ({ isValid, errors, formType }: { isValid: boolean, errors: string[], formType: formType }) => {
   // console.log('order:changed');
+
+  if (formType === 'payment') {
+    paymentForm.setValidity(isValid, errors);
+  } else if (formType === 'contacts') {
+    contactsForm.setValidity(isValid, errors);
+  }
 });
 
 events.on('modal:opened', () => {
@@ -115,18 +121,27 @@ events.on('order:opened', () => {
   modal.content = paymentForm.render();
 });
 
-events.on('order:payment-updated', ({ payment, address }: { payment: PaymentMethod, address: string }) => {
-  // console.log('order:payment-updated');
+events.on('order:payment-changed', ({ payment, address }: { payment: PaymentMethod, address: string }) => {
+  // console.log('order:payment-changed');
 
   orderModel.setPayment({ payment, address });
+});
+
+events.on('order:payment-updated', () => {
+  // console.log('order:payment-updated');
+
   contactsForm.clearForm();
   modal.content = contactsForm.render();
 });
 
-events.on('order:contacts-updated', ({ email, phone }: { email: string, phone: string }) => {
-  // console.log('order:constants-updated');
+events.on('order:contacts-changed', ({ email, phone }: { email: string, phone: string }) => {
+  // console.log('order:contacts-changed');
 
   orderModel.setContacts({ email, phone });
+});
+
+events.on('order:contacts-updated', () => {
+  // console.log('order:constants-updated');
 
   api.postOrder({
     ...orderModel.order,
