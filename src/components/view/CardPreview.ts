@@ -22,6 +22,8 @@ export class CardPreview extends GalleryItem {
       } else {
         this.events.emit('product:added', { id: productItem.id });
       }
+
+      this.events.emit('modal:close-request');
     });
   }
 }

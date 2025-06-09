@@ -53,7 +53,7 @@ events.on('basket:changed', () => {
   page.renderBasket(basketModel.products.length);
   const basketCards = basketModel.products.map((item, index) => new BasketItem(cloneTemplate('#card-basket'), item, index + 1, events).render());
   basket.products = basketCards;
-  basket.setTotalPrice(basketModel.total);
+  basket.setTotalPrice(basketModel.getTotal());
   basket.render();
 });
 
@@ -71,6 +71,12 @@ events.on('modal:closed', () => {
   // console.log('modal:closed');
 
   page.lock(false);
+});
+
+events.on('modal:close-request', () => {
+  // console.log('modal:close-request');
+
+  modal.close();
 });
 
 events.on('card-preview:opened', ({ id }: { id: string }) => {
@@ -94,18 +100,10 @@ events.on('product:added', ({ id }: { id: string }) => {
 
   const product = productsModel.getProduct(id);
   basketModel.addProduct(product);
-  modal.close();
 });
 
 events.on('product:removed', ({ id }: { id: string }) => {
   // console.log('product:removed');
-
-  basketModel.removeProduct(id);
-  modal.close();
-});
-
-events.on('basket-item:removed', ({ id }: { id: string }) => {
-  // console.log('basket-item:removed');
 
   basketModel.removeProduct(id);
 });
@@ -130,13 +128,10 @@ events.on('order:contacts-updated', ({ email, phone }: { email: string, phone: s
 
   orderModel.setContacts({ email, phone });
 
-  const nullProducts = basketModel.products.filter(item => item.price === null);
-  nullProducts.forEach(item => basketModel.removeProduct(item.id));
-
   api.postOrder({
     ...orderModel.order,
-    items: basketModel.products.map(item => item.id),
-    total: basketModel.total
+    items: basketModel.getOrderItemsIDs(),
+    total: basketModel.getTotal()
   })
     .then(data => {
       success.setDescription(data.total);
@@ -144,11 +139,5 @@ events.on('order:contacts-updated', ({ email, phone }: { email: string, phone: s
       basketModel.clearBasket();
     })
     .catch(err => console.error(err));
-});
-
-events.on('order:success', () => {
-  // console.log('order:success');
-
-  modal.close();
 });
 

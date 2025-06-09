@@ -8,11 +8,12 @@ export interface IProductsModel {
 
 export interface IBasketModel {
   get products(): IProductItem[];
-  get total(): number;
   addProduct(product: IProductItem): void;
   removeProduct(id: string): void;
   clearBasket(): void;
+  getTotal(): number;
   isInBasket(id: string): boolean;
+  getOrderItemsIDs(): string[];
 }
 
 export interface IOrderModel {

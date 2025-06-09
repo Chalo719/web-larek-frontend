@@ -159,18 +159,17 @@ type PaymentMethod = "card" | "cash";
 Поля:
 
 - `_products: IProductItem[]` - массив всех товаров в корзине
-- `_total: number` - текущая сумма стоимостей товаров в корзине
 - `events: IEvents` - брокер событий
 
 Методы:
 
 - `get products(): IProductItem[]` - геттер для получения всего списка товаров в корзине
-- `get total(): number` - геттер для получения суммы стоимостей товаров в корзине
 - `addProduct(product: IProductItem): void` - добавляет товар в корзину
 - `removeProduct(id: string): void` - удаляет товар из корзины
 - `clearBasket(): void` - очищает корзину
 - `getTotal(): number` - расчитывает сумму стоимостей всех товаров, которые находятся в корзине
 - `isInBasket(id: string): boolean` - проверяет наличие товара с указанным id в корзине
+- `getOrderItemsIDs(): string[]` - предоставляет массив id не бесценных товаров для формирования заказа
 
 ### OrderModel
 
@@ -373,12 +372,11 @@ _События, возникающие при взаимодействии по
 
 - `modal:opened` - открытие модального окна `Modal`
 - `modal:closed` - закрытие модального окна `Modal`
+- `modal:close-request` - запрос на закрытие модального окна из компонентов представления
 - `card-preview:opened` - выбор карточки `GalleryItem`, открытие карточки товара `CardPreview` в модальном окне
 - `basket:opened` - открытие корзины `Basket` в модальном окне
 - `product:added` - добавление товара в корзину по кнопке в `CardPreview`
-- `product:removed` - удаление товара из корзины по кнопке в `CardPreview`
-- `basket-item:removed` - удаление товара из корзины по кнопке в `BasketItem`
+- `product:removed` - удаление товара из корзины по кнопке в `CardPreview` или `BasketItem`
 - `order:opened` - переход к форме оформления заказа по кнопке в `Basket`, открытие формы `PaymentForm` в модальном окне
 - `order:payment-updated` - отправка формы `PaymentForm`, открытие формы `ContactsForm` в модальном окне
 - `order:contacts-updated` - отправка формы `ContactsForm`, открытие окна `Success` в модальном окне
-- `order:success` - нажатие на кнопку "За новыми покупками!" в окне `Success`

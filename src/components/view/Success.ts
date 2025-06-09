@@ -12,7 +12,7 @@ export class Success implements IView {
     this.description = ensureElement('.order-success__description', this.success);
     this.closeButton = ensureElement<HTMLButtonElement>('.order-success__close', this.success);
 
-    this.closeButton.addEventListener('click', () => this.events.emit('order:success'));
+    this.closeButton.addEventListener('click', () => this.events.emit('modal:close-request'));
   }
 
   setDescription(totalPrice: number): void {

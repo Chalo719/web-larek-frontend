@@ -15,6 +15,6 @@ export class BasketItem extends Card {
 
     this.index.textContent = String(index);
 
-    this.removeButton.addEventListener('click', () => this.events.emit('basket-item:removed', { id: productItem.id }));
+    this.removeButton.addEventListener('click', () => this.events.emit('product:removed', { id: productItem.id }));
   }
 }
