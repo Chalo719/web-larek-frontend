@@ -12,9 +12,7 @@ export abstract class Form implements IForm {
     this.formErrors = ensureElement('.form__errors', this.form);
   }
 
-  clearForm(): void {
-    // Реализуется в дочерних классах
-  }
+  abstract clearForm(): void;
 
   setValidity(isValid: boolean, errors: string[]): void {
     this.formErrors.textContent = errors.join('\n');
