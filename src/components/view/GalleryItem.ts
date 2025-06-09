@@ -2,7 +2,6 @@ import { IProductItem } from "../../types";
 import { ensureElement } from "../../utils/utils";
 import { IEvents } from "../base/events";
 import { Card } from "./Card";
-import { CardPreview } from "./CardPreview";
 
 const categoryClasses: Record<string, string> = {
   "софт-скил": 'card__category_soft',

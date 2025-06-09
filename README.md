@@ -178,6 +178,7 @@ type PaymentMethod = "card" | "cash";
 Поля:
 
 - `_order: IOrderData` - данные о заказе (способ оплаты, адрес, электронная почта и номер телефона)
+- `errors: string[]` - массив сообщений об ошибках валидации
 - `events: IEvents` - брокер событий
 
 Методы:
@@ -185,6 +186,9 @@ type PaymentMethod = "card" | "cash";
 - `get order(): IOrderData` - возвращает данные о заказе
 - `setPayment(data: Pick<IOrderData, 'payment' | 'address'>): void` - установаливает данные о способе оплаты и адресе (форма 1)
 - `setContacts(data: Pick<IOrderData, 'email' | 'phone'>): void` - устанавливает данные о почте и телефоне (форма 2)
+- `isValid(): boolean` - проверяет наличие ошибок валидации
+- `validatePayment(): void` - проверяет наличие данных о способе оплаты и адресе доставки и устанавливает ошибки
+- `validateContacts(): void` - проверяет наличие данных об электронной почте и номере телефона и устанавливает ошибки
 
 ## Слой Отображения (View)
 
@@ -300,6 +304,7 @@ type PaymentMethod = "card" | "cash";
 Методы:
 
 - `clearForm(): void` - очищает поля и ошибки формы
+- `setValidity(isValid: boolean, errors: string[]): void` - устанавливает ошибки и управляет блокировкой кнопки отправки
 - `render(): HTMLFormElement` - возвращает разметку для отрисовки
 
 ### PaymentForm
@@ -312,10 +317,6 @@ type PaymentMethod = "card" | "cash";
 - `private currentPaymentMethod: PaymentMethod | undefined` - выбранный способ оплаты
 - `events: IEvents` - брокер событий
 
-Методы:
-
-- `checkValidation(): void` - проверка валидности формы
-
 ### ContactsForm
 
 Расширяет абстрактный класс `Form`, добавляя ему свойства, необходимые для отображения формы получения адреса электронной почты и номера телефона:
@@ -323,10 +324,6 @@ type PaymentMethod = "card" | "cash";
 - `emailInput: HTMLInputElement` - элемент для поля ввода адреса электронной почты
 - `phoneInput: HTMLInputElement` - элемент для поля ввода номера телефона
 - `events: IEvents` - брокер событий
-
-Методы:
-
-- `checkValidation(): void` - проверка валидности формы
 
 ### Success
 
@@ -378,5 +375,7 @@ _События, возникающие при взаимодействии по
 - `product:added` - добавление товара в корзину по кнопке в `CardPreview`
 - `product:removed` - удаление товара из корзины по кнопке в `CardPreview` или `BasketItem`
 - `order:opened` - переход к форме оформления заказа по кнопке в `Basket`, открытие формы `PaymentForm` в модальном окне
+- `order:payment-changed` - изменение данных в модели `Order` во время ввода данных в `PaymentForm`
 - `order:payment-updated` - отправка формы `PaymentForm`, открытие формы `ContactsForm` в модальном окне
+- `order:contacts-changed` - изменение данных в модели `Order` во время ввода данных в `ContactsForm`
 - `order:contacts-updated` - отправка формы `ContactsForm`, открытие окна `Success` в модальном окне
